@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe</title>
+<style>
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 200px;
+    }
+
+    .cell {
+        width: 60px;
+        height: 60px;
+        border: 1px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div class="container" id="board"></div>
+    <script>
+        const board = document.getElementById('board');
+        let currentPlayer = 'X';
+        let cells = ['', '', '', '', '', '', '', '', ''];
+        let gameOver = false;
+
+        // Function to check if a player has won
+        const checkWinner = (player) => {
+            const winningConditions = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+
+            return winningConditions.some(combination => {
+                return combination.every(index => cells[index] === player);
+            });
+        };
+
+        // Function to check if it's a tie
+        const checkTie = () => {
+            return cells.every(cell => cell !== '');
+        };
+
+        // Function to handle player's move
+        const playerMove = (index) => {
+            if (!gameOver && cells[index] === '') {
+                cells[index] = currentPlayer;
+                renderBoard();
+                if (checkWinner(currentPlayer)) {
+                    alert(`${currentPlayer} wins!`);
+                    gameOver = true;
+                } else if (checkTie()) {
+                    alert("It's a tie!");
+                    gameOver = true;
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    computerMove();
+                }
+            }
+        };
+
+        // Function to handle computer's move
+        const computerMove = () => {
+            if (!gameOver) {
+                let index;
+                do {
+                    index = Math.floor(Math.random() * 9);
+                } while (cells[index] !== '');
+                cells[index] = currentPlayer;
+                renderBoard();
+                if (checkWinner(currentPlayer)) {
+                    alert(`${currentPlayer} wins!`);
+                    gameOver = true;
+                } else if (checkTie()) {
+                    alert("It's a tie!");
+                    gameOver = true;
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                }
+            }
+        };
+
+        // Function to render the board
+        const renderBoard = () => {
+            board.innerHTML = '';
+            cells.forEach((cell, index) => {
+                const cellDiv = document.createElement('div');
+                cellDiv.classList.add('cell');
+                cellDiv.textContent = cell;
+                cellDiv.addEventListener('click', () => playerMove(index));
+                board.appendChild(cellDiv);
+            });
+        };
+
+        // Initialize the game
+        renderBoard();
+    </script>
+</body>
+</html>
